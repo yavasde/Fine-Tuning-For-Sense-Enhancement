@@ -47,7 +47,7 @@ def contrastive_loss(word_embeddings, labels, tau=0.1):
             positive_similarities = []
             for i in range(len(all_anchor_embeddings_word)):
                 if idx != i:
-                    similarity = torch.exp(utils.cosine_similarity(anchor_embedding, all_anchor_embeddings_word[i])/ tau)
+                    similarity = torch.exp(F.cosine_similarity(anchor_embedding, all_anchor_embeddings_word[i], dim=0)/ tau)
                     all_similarities.append(similarity)
                     if all_anchor_labels_word[i] == anchor_label:
                         positive_similarities.append(similarity)
