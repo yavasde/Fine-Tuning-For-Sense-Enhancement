@@ -1,6 +1,4 @@
 from torch.utils.data import Dataset
-import torch
-import torch.nn.functional as F
 
 
 def freeze_model_layers(model, num_layers_to_freeze=4):
