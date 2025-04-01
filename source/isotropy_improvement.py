@@ -32,7 +32,7 @@ def turn_to_dataset(isotropic_train_data, isotropic_dev_data, isotropic_test_dat
     
     return new_wic_dataset
 
-def isotropize_embeddings(word_vectors, pca_dim_global):
+def isotropize_embeddings(word_vectors, pca_dim):
     mean_vector = np.mean(word_vectors, axis=0)
     centered_vectors = [vector - mean_vector for vector in word_vectors]
     pca = PCA()
@@ -40,7 +40,7 @@ def isotropize_embeddings(word_vectors, pca_dim_global):
 
     processed_vectors = []
     for vector in centered_vectors:
-        projections = sum((vector.dot(pc) * pc) for pc in pca.components_[:pca_dim_global])
+        projections = sum((vector.dot(pc) * pc) for pc in pca.components_[:pca_dim])
         processed_vector = vector - projections
         processed_vectors.append(processed_vector)
 
