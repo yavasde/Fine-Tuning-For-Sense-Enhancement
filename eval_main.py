@@ -60,7 +60,6 @@ Furthermore, it applies isotropization post-processing to the embeddings if spec
             wic_dataset = pickle.load(wic_file)
 
     print("Preparing Topology data\n")
-    #prepare semcor?
     topology_dataset_path = f"evaluation/eval_datasets/topology/topology_dataset_{model_type}-{tau}.pickle"
     topology_dataset_file = Path(topology_dataset_path)
     if not topology_dataset_file.is_file():
