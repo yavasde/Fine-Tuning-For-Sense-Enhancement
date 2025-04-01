@@ -4,24 +4,17 @@ from fine_tuning.SPL_fine_tuning import fine_tuning_SPL
 from fine_tuning.task_adaptation import fine_tuning_task
 
 """
-This script fine-tunes the BERT model with specified method (SCL, SPL, or for Task adaptation. It performs the following steps:
-
-1. Extracts sentences containing the target word and its alternative forms.
-2. Annotates these sentences with linguistic features (sentence context features).
-3. Extracts embeddings for the target word in each sentence using a pre-trained language model.
-4. Clusters the embeddings.
-5. Selects the top features with recursive feature elimination.
-6. Annotate the clusters with informative features and writes the results to files 
-and plots the clusters with annotated features.
+This script fine-tunes the BERT model with specified method (SCL, SPL, or for Task adaptation).
 
 Usage:
-    python main.py target_word alternative_forms n_sentences n_features
+    python train_main.py finetuning_method learning_rate epoch tau
 
 Arguments:
 - finetuning_method (str): Method of fine-tuning (SCL, SPL or TASK)
 - learning_rate (float): Learning Rate
 - epoch (int): Number of Epochs
 - tau (float): Temperature of the loss. Required with SCL and SPL.
+
 Example:
     python train_main.py SCL 0.0001 20 0.1
 """
