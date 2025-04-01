@@ -4,7 +4,7 @@ from fine_tuning.SPL_fine_tuning import fine_tuning_SPL
 from fine_tuning.task_adaptation import fine_tuning_task
 
 """
-This script fine-tunes the BERT model with specified method (SCL, SPL, or for Task adaptation).
+This script fine-tunes the BERT model with the specified method (SCL, SPL, or for Task adaptation).
 
 Usage:
     python train_main.py finetuning_method learning_rate epoch tau
@@ -21,7 +21,7 @@ Example:
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Fine-tunes the BERT model with the specified method (SCL, SPL, or for Task adaptation).")
     parser.add_argument("finetuning_method", type=str, help="Method of fine-tuning (SCL, SPL or TASK)")
     parser.add_argument('lr', type=str, help='Learning Rate')
     parser.add_argument('epoch', type=str, help='Number of Epochs')
