@@ -49,15 +49,3 @@ For evaluating istoropized BERT embeddings:
 ```bash
 python eval_main.py BERT --isotropized
 ```
-
-#### Example:
-
-For evaluating BERT's embedding space:
-```bash
-python eval_main.py BERT  
-```
-
-For evaluating a fine-tuned model's embedding space:
-```bash
-python eval_main.py SCL 0.1 
-```
