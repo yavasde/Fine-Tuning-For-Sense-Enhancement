@@ -13,10 +13,10 @@ The code has following functionalities:
 
 #### Argument Definitions
 
-- **fine-tuning_method**: Method of fine-tuning (SCL, SPL or TASK)
-- **learning_rate**: Learning rate 
-- **epoch**: Number of epoch 
-- **tau**: Temperature of the loss (only for SCL and SPL)
+- **finetuning_method (str):** Method of fine-tuning (SCL, SPL or TASK)
+- **learning_rate (float):** Learning Rate
+- **epoch (int):** Number of Epochs
+- **tau (float):** Temperature of the loss. Required with SCL and SPL.
 
 #### Example:
 
