@@ -4,7 +4,7 @@ from transformers import BertModel
 
 
 class BERTforSCL(nn.Module):
-    def __init__(self, bert_model_name='bert-base-uncased', drop_out=0.1):
+    def __init__(self, bert_model_name='bert-base-uncased', drop_out=0.7):
         super(BERTforSCL, self).__init__()
         self.bert = BertModel.from_pretrained(bert_model_name, hidden_dropout_prob=drop_out)
 
@@ -13,7 +13,7 @@ class BERTforSCL(nn.Module):
         return outputs
 
 class BERTforSPL(nn.Module):
-    def __init__(self, bert_model_name='bert-base-uncased', num_classes=2, drop_out=0.3):
+    def __init__(self, bert_model_name='bert-base-uncased', num_classes=87, drop_out=0.7):
         super(BERTforSPL, self).__init__()
         self.bert = BertModel.from_pretrained(bert_model_name, hidden_dropout_prob=drop_out)
         self.classifier = nn.Linear(self.bert.config.hidden_size, num_classes)  
@@ -30,12 +30,12 @@ class WordOccurrenceClassifier(nn.Module):
         self.bert = BertModel.from_pretrained(bert_model_name, hidden_dropout_prob=drop_out)
         self.classifier = nn.Linear(2 * 768, 1)
 
-    def forward(self, tokenized_sentences, word_indices):
+    def forward(self, tokenized_sentences, word_indices, device):
         input_ids = tokenized_sentences['input_ids']
         token_type_ids = tokenized_sentences['token_type_ids']
         attention_mask = tokenized_sentences['attention_mask']
 
-        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
+        outputs = self.bert(input_ids=input_ids.to(device), attention_mask=attention_mask.to(device), token_type_ids=token_type_ids.to(device))
         hidden_states = outputs.last_hidden_state
 
         emd1s = []
