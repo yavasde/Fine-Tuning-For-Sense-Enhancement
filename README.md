@@ -43,3 +43,23 @@ For evaluating a fine-tuned model's embedding space:
 ```bash
 python eval_main.py SCL 0.1 
 ```
+
+### Isotropization Evaluation
+
+#### Argument Definitions
+
+- **model_type**: Type of model (BERT or fine-tuned for SCL, SPL or TASK)
+- **tau**: tau for SCL or SPL
+- **isotropized**: Temperature of the loss (only for SCL and SPL)
+
+#### Example:
+
+For evaluating BERT's embedding space:
+```bash
+python eval_main.py BERT  
+```
+
+For evaluating a fine-tuned model's embedding space:
+```bash
+python eval_main.py SCL 0.1 
+```
