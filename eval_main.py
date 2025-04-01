@@ -7,60 +7,51 @@ from evaluation.isotropy_improvement import istoropize_datasets
 import pickle
 
 """
-This script automatically annotates the clusters of a word based on the sentence 
-features responsible for the formation of the clusters. It performs the following steps:
-
-1. Extracts sentences containing the target word and its alternative forms.
-2. Annotates these sentences with linguistic features (sentence context features).
-3. Extracts embeddings for the target word in each sentence using a pre-trained language model.
-4. Clusters the embeddings.
-5. Selects the top features with recursive feature elimination.
-6. Annotate the clusters with informative features and writes the results to files 
-and plots the clusters with annotated features.
+This script evaluated the embedding space of a model in terms of topology and task performance.
+Furthermore, it applies isotropization post-processing to the embeddings if specified before evaluation.
 
 Usage:
-    python main.py target_word alternative_forms n_sentences n_features
+    python eval_main.py model_type tau --isotropized
 
 Arguments:
-- target_word (str): Target word to analyze.
-- alternative_forms (str): Alternative forms of the word, e.g., 
-    "buy\bought" for "buy".
-- n_sentences (int): Number of sentences to extract.
-- n_features (int): Number of sentence features to select.
+- model_type (str): Type of the model (BERT or fine-tuned for SCL, SPL or TASK)
+- tau (float) (optional): Temperature of the loss (only for SCL and SPL)
+- isotropized (boolean) (optional): Apply isotropization
 
 Example:
-    python script.py buy buy\bought 200 50
+    python eval_main.py BERT --isotropized
 """
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Automatically annotates the clusters of a word based on the"
-        "sentence features resposible for the formation of the clusters."
+        description="
+This script evaluated the embedding space of a model in terms of topology and task performance.
+Furthermore, it applies isotropization post-processing to the embeddings if specified before evaluation.
+"
     )
-    parser.add_argument("model_type", type=str, help="Target word")
+    parser.add_argument("model_type", type=str, help="Type of the model (BERT or fine-tuned for SCL, SPL or TASK)")
     parser.add_argument(
-        "model_name",
-        type=str,
-        help="Alternative forms of the word like 'buy' and 'bought' for 'buy'."
-        "Give as: buy\\bought",
+        "tau",
+        type=float,
+        help="Temperature of the loss (only for SCL and SPL)",
     )
     parser.add_argument('--isotropized', dest='isotropized', action='store_true',
-                    help='Set the flag value to True.')
+                    help='Apply isotropization.')
 
 
     args = parser.parse_args()
     model_type = args.model_type
-    model_name = args.model_name
+    tau = args.tau
 
-    print(f"Model Name: {model_type}-{model_name}")
+    print(f"Model Name: {model_type}-{tau}")
     print("Model loading\n")
 
-    model, tokenizer = load_models(model_type, model_name)
+    model, tokenizer = load_models(model_type, tau)
 
     # Prepare Evaluation Data
     print("Preparing WiC data\n")
-    wic_dataset_path = f"evaluation/eval_datasets/wic/wic_dataset_{model_type}-{model_name}.pickle"
+    wic_dataset_path = f"evaluation/eval_datasets/wic/wic_dataset_{model_type}-{tau}.pickle"
     wic_dataset_file = Path(wic_dataset_path)
     if not wic_dataset_file.is_file():
         wic_dataset = prepare_wic_dataset(model, tokenizer, model_type=model_type, dataset_path=wic_dataset_path)
@@ -70,7 +61,7 @@ def main():
 
     print("Preparing Topology data\n")
     #prepare semcor?
-    topology_dataset_path = f"evaluation/eval_datasets/topology/topology_dataset_{model_type}-{model_name}.pickle"
+    topology_dataset_path = f"evaluation/eval_datasets/topology/topology_dataset_{model_type}-{tau}.pickle"
     topology_dataset_file = Path(topology_dataset_path)
     if not topology_dataset_file.is_file():
         topology_dataset = prepare_topology_dataset(model, tokenizer, model_type=model_type, dataset_path=topology_dataset_path)
