@@ -16,12 +16,16 @@ The code has following functionalities:
 - **finetuning_method (str):** Method of fine-tuning (SCL, SPL or TASK)
 - **learning_rate (float):** Learning Rate
 - **epoch (int):** Number of Epochs
-- **tau (float):** Temperature of the loss. Required with SCL and SPL.
+- **tau (float) (optional):** Temperature of the loss. Required with SCL and SPL.
 
 #### Example:
 
 ```bash
-python train_main.py SCL 0.0001 20 0.1
+python train_main.py TASK 0.0001 20 
+```
+
+```bash
+python train_main.py SCL 0.0001 20 -tau 0.1
 ```
 
 ### Evaluation
