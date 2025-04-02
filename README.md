@@ -32,9 +32,9 @@ python train_main.py SCL 0.0001 20 -tau 0.1
 
 #### Argument Definitions
 
-- **model_type**: Type of model (BERT or fine-tuned for SCL, SPL or TASK)
-- **tau**: tau for SCL or SPL
-- **isotropized**: Temperature of the loss (only for SCL and SPL)
+- **model_type (str):** Type of model (BERT or fine-tuned for SCL, SPL or TASK)
+- **tau (float):** tau for SCL or SPL
+- **isotropized (boolean) (optional):** Temperature of the loss (only for SCL and SPL)
 
 #### Example:
 
