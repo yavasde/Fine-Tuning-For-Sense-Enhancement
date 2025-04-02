@@ -2,9 +2,7 @@ import argparse
 from evaluation.eval_data_preparation import prepare_topology_dataset, prepare_wic_dataset, load_models
 from evaluation.topology import evaluate_topology
 from evaluation.wic_threshold_test import select_best_threshold
-from pathlib import Path
-from evaluation.isotropy_improvement import istoropize_datasets
-import pickle
+from source.isotropy_improvement import istoropize_datasets
 
 """
 This script evaluated the embedding space of a model in terms of topology and task performance.
@@ -24,53 +22,38 @@ Example:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="
-This script evaluated the embedding space of a model in terms of topology and task performance.
-Furthermore, it applies isotropization post-processing to the embeddings if specified before evaluation.
-"
-    )
-    parser.add_argument("model_type", type=str, help="Type of the model (BERT or fine-tuned for SCL, SPL or TASK)")
-    parser.add_argument(
-        "tau",
-        type=float,
-        help="Temperature of the loss (only for SCL and SPL)",
-    )
-    parser.add_argument('--isotropized', dest='isotropized', action='store_true',
-                    help='Apply isotropization.')
-
+    parser = argparse.ArgumentParser()
+    parser.add_argument("model_type", type=str, help="Type of the model"
+                                                            "(BERT or fine-tuned for SCL, SPL or TASK)")
+    parser.add_argument("-tau", type=float, help="Optional argument. Temperature of the loss"
+                                                        " (only for SCL and SPL)")
+    parser.add_argument('--isotropized', action='store_true', help="Optional argument."
+                                                                            "Apply isotropization.")
 
     args = parser.parse_args()
     model_type = args.model_type
     tau = args.tau
+    if tau and model_type in ["BERT", "TASK"]:
+        print(f"Tau is not required for model type {model_type}."
+              " Evaluation will continue without considering tau.")
+    
+    if not tau and model_type in ["SCL", "SPL"]:
+        raise Exception(f"Tau is required for model type {model_type}.")
 
     print(f"Model Name: {model_type}-{tau}")
     print("Model loading\n")
 
-    model, tokenizer = load_models(model_type, tau)
+    model, tokenizer = load_models(model_type, model_name=tau)
 
     # Prepare Evaluation Data
     print("Preparing WiC data\n")
-    wic_dataset_path = f"evaluation/eval_datasets/wic/wic_dataset_{model_type}-{tau}.pickle"
-    wic_dataset_file = Path(wic_dataset_path)
-    if not wic_dataset_file.is_file():
-        wic_dataset = prepare_wic_dataset(model, tokenizer, model_type=model_type, dataset_path=wic_dataset_path)
-    else:
-        with open(wic_dataset_path, "rb") as wic_file:
-            wic_dataset = pickle.load(wic_file)
+    wic_dataset = prepare_wic_dataset(model, tokenizer, model_type=model_type)
 
     print("Preparing Topology data\n")
-    topology_dataset_path = f"evaluation/eval_datasets/topology/topology_dataset_{model_type}-{tau}.pickle"
-    topology_dataset_file = Path(topology_dataset_path)
-    if not topology_dataset_file.is_file():
-        topology_dataset = prepare_topology_dataset(model, tokenizer, model_type=model_type, dataset_path=topology_dataset_path)
-    else:
-        with open(topology_dataset_path, "rb") as topology_file:
-            topology_dataset = pickle.load(topology_file)
+    topology_dataset = prepare_topology_dataset(model, tokenizer, model_type=model_type)
 
-    if args.isotropized == True:
+    if args.isotropized:
         topology_dataset, wic_dataset = istoropize_datasets(topology_dataset, wic_dataset)
-
 
     # Evaluate WiC Performance
     print("Evaluating WiC")
