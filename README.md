@@ -8,7 +8,7 @@ The code has following functionalities:
 3) Evaluation of embedding spaces after isotropization in terms of _topology_, and _WiC task performance_
 
 
-You can either fine-tune and evaluate the models or evaluate the BERT model and isotropization method without fine-tuning.
+The code can be used to fine-tune the BERT model and evaluate the resulting models or evaluate the BERT model and isotropization method without fine-tuning.
 The trained models will be shared via huggingface after the anonymity period ends.
 
 ## Usage Example
