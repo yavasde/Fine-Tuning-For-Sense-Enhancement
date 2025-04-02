@@ -111,11 +111,8 @@ def fine_tuning_SCL(learning_rate=None, num_epochs=None, tau=None):
             )
         
         if val_avg_loss <= best_loss:
-            torch.save(model, f'trained_models/SCL-BERT_{tau}.pth')
+            torch.save(model, f"trained_models/SCL-{tau}.pth")
             best_loss = val_avg_loss
         else:
             print(f"Best Model is trained for {epoch}")
             break
-
-
-    
