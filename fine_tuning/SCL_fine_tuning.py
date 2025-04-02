@@ -80,7 +80,7 @@ def fine_tuning_SCL(learning_rate=None, num_epochs=None, tau=None):
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
-            train_running_loss += loss.item()
+            train_running_loss += loss
 
             if (batch_id + 1) % 50 == 0:
                 print(
