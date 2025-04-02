@@ -11,6 +11,13 @@ The code has following functionalities:
 The code can be used to fine-tune the BERT model and evaluate the resulting models or evaluate the BERT model and isotropization method without fine-tuning.
 The trained models will be shared via huggingface after the anonymity period ends.
 
+## Installation
+
+Download the repository and pip install the requirements with:
+```bash
+pip install -r requirements.txt
+```
+
 ## Usage Example
 
 ### Fine-Tuning
