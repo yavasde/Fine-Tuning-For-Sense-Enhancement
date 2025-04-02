@@ -49,7 +49,7 @@ python eval_main.py BERT
 
 For evaluating a fine-tuned model's embedding space:
 ```bash
-python eval_main.py SCL 0.1 
+python eval_main.py SCL -tau 0.1 
 ```
 
 
