@@ -13,8 +13,8 @@ Usage:
 
 Arguments:
 - model_type (str): Type of the model (BERT or fine-tuned for SCL, SPL or TASK)
-- tau (float) (optional): Temperature of the loss (only for SCL and SPL)
-- isotropized (boolean) (optional): Apply isotropization
+- tau (float) (optional): Temperature of the loss. Required for SCL and SPL.
+- isotropized (boolean) (optional): Applies isotropization.
 
 Example:
     python eval_main.py BERT --isotropized
