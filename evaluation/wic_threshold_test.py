@@ -1,6 +1,5 @@
 import torch
 from scipy.spatial.distance import cosine
-import pickle
 import numpy as np
 
 
@@ -12,7 +11,7 @@ def calculate_accuracy(labels, predictions):
 def cosine_similarity(vec1, vec2):
     return 1 - cosine(vec1.squeeze(), vec2.squeeze())
     
-def calculate_word_similarity(dataset, similarity_type=''):
+def calculate_word_similarity(dataset):
     labels = []
     similarities = []
     for i in range(len(dataset["inputs"])):
