@@ -3,6 +3,9 @@ import torch
 from tqdm.auto import tqdm
 import pickle
 from source.utils import split_data
+import tarfile
+from pathlib import Path
+
 
 def extract_all_noun_embeddings(model, tokenizer, sentence, labels, remove=[0, -100], model_type=''):
     noun_embeddings = []
@@ -67,10 +70,18 @@ def extract_wic_data(model, tokenizer, model_type='', data_type=''):
             indeces = line[:-1].split("\t")[2]
             word1_idx = indeces.split("-")[0]
             word2_idx = indeces.split("-")[1]
-            word1_vector = extract_target_word_embedding(model, tokenizer, sentence1, word1_idx, model_type=model_type)
-            word2_vector = extract_target_word_embedding(model, tokenizer, sentence2, word2_idx, model_type=model_type)
+            word1_vector = extract_target_word_embedding(model,
+                                                         tokenizer,
+                                                         sentence1,
+                                                         word1_idx,
+                                                         model_type=model_type)
+            word2_vector = extract_target_word_embedding(model,
+                                                         tokenizer,
+                                                         sentence2,
+                                                         word2_idx,
+                                                         model_type=model_type)
             data['inputs'].append(torch.cat((word1_vector, word2_vector), 1))
-            progress_bar.update(1)       
+            progress_bar.update(1)    
 
     with open(f"data/wic/{data_type}/{data_type}.gold.txt", 'r', encoding='utf8') as train_data_file:
         for line in train_data_file.readlines():
@@ -81,31 +92,39 @@ def extract_wic_data(model, tokenizer, model_type='', data_type=''):
             data['labels'].append(torch.tensor(label))
     return data 
 
-def load_models(model_type, model_name):
+def load_models(model_type, model_name=None):
     bert_model_name = "bert-base-uncased"
     if model_type == "BERT":
         model_name = bert_model_name
         tokenizer = AutoTokenizer.from_pretrained(bert_model_name)
         model = AutoModel.from_pretrained(bert_model_name)
+    elif model_type == "TASK":
+        tokenizer = AutoTokenizer.from_pretrained(bert_model_name)
+        model = torch.load(f'trained_models/{model_type}.pth', map_location=torch.device('cpu'), weights_only=False)
+        model.eval()
     else:
         tokenizer = AutoTokenizer.from_pretrained(bert_model_name)
         model = torch.load(f'trained_models/{model_type}-{model_name}.pth', map_location=torch.device('cpu'), weights_only=False)
         model.eval()
     return model, tokenizer
 
-def prepare_wic_dataset(model, tokenizer, model_type='', dataset_path=''):
+def prepare_wic_dataset(model, tokenizer, model_type=''):
     test_data = extract_wic_data(model, tokenizer, model_type=model_type, data_type="test")
     dev_data = extract_wic_data(model, tokenizer, model_type=model_type, data_type="dev")
     train_data = extract_wic_data(model, tokenizer, model_type=model_type, data_type="train")
 
     wic_dataset = {"train": train_data, "test": test_data, "dev": dev_data}
-    with open(dataset_path, "wb") as dfile:
-        pickle.dump(wic_dataset, dfile)
     return wic_dataset
 
-def prepare_topology_dataset(model, tokenizer, model_type='', dataset_path=''):
-    with open(f"data/semcor_data.pickle", "rb") as data_file:
-        semcor_data = pickle.load(data_file)
+def prepare_topology_dataset(model, tokenizer, model_type=''):
+    semcor_data_file = "data/semcor_data/data/semcor.pickle"
+    my_file = Path(semcor_data_file)
+    if not my_file.is_file():
+        with tarfile.open("data/semcor.tar.gz", "r:gz") as tar:
+            tar.extractall("data/semcor_data")
+
+    with open(semcor_data_file, "rb") as data_file:
+        semcor_data = pickle.load(data_file)   
 
     X_train, y_train, X_val, y_val, X_test, y_test = split_data(semcor_data)
 
@@ -149,18 +168,4 @@ def prepare_topology_dataset(model, tokenizer, model_type='', dataset_path=''):
             index_count += 1
 
     test_data = {"inputs": final_embeddings, "labels": final_labels, "nouns": final_nouns}
-
-    with open(
-        dataset_path, "wb"
-    ) as data_file:
-        pickle.dump(test_data, data_file)
-
     return test_data
-
-
-
-
-
-
-
-
