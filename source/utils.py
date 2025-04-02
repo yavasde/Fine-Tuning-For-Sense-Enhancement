@@ -1,9 +1,10 @@
+import pickle
 from torch.utils.data import Dataset
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
-import pickle
 from torch.nn.utils.rnn import pad_sequence
 import torch
+import tarfile
 
 
 def freeze_model_layers(model, num_layers_to_freeze=8):
@@ -54,14 +55,24 @@ def custom_collate_fn(batch):
     
 def prepare_data_for_training(batch_size=8, task_adaptation=False):
     if task_adaptation:
-        with open(f"data/semcor_binary.pickle", "rb") as data_file:
+        with tarfile.open("data/semcor_binary.tar.gz", "r:gz") as tar:
+            tar.extractall("data/semcor_data")
+
+        with open("data/semcor_data/data/semcor_binary.pickle", "rb") as data_file:
             dataset = pickle.load(data_file)
-            
-            X_train, X_rest, y_train, y_rest, z_train, z_rest = train_test_split(dataset["sentences"], dataset["labels"], dataset["indeces"], test_size=0.3, random_state=42)
-            X_test, X_val, y_test, y_val, z_test, z_val = train_test_split(X_rest, y_rest, z_rest, test_size=0.5, random_state=42)
+            X_train, X_rest, y_train, y_rest, z_train, z_rest = train_test_split(
+                                                            dataset["sentences"],
+                                                            dataset["labels"],
+                                                            dataset["indeces"],
+                                                            test_size=0.3,
+                                                            random_state=42)
+            X_test, X_val, y_test, y_val, z_test, z_val = train_test_split(X_rest,
+                                                                           y_rest,
+                                                                           z_rest,
+                                                                           test_size=0.5,
+                                                                           random_state=42)
 
             train_data = {"sentences": X_train, "labels": y_train, "indeces": z_train}
-            test_data = {"sentences": X_test, "labels": y_test, "indeces": z_test}
             val_data = {"sentences": X_val, "labels": y_val, "indeces": z_val}
 
             train_dataset = CustomDataset_task(train_data["sentences"], train_data["labels"], train_data["indeces"])
@@ -70,10 +81,13 @@ def prepare_data_for_training(batch_size=8, task_adaptation=False):
             train_dataloader = DataLoader(train_dataset, batch_size=batch_size, collate_fn=custom_collate_fn)
             validation_dataloader = DataLoader(val_dataset, batch_size=batch_size, collate_fn=custom_collate_fn)
     else:
-        with open(f"data/semcor_data.pickle", "rb") as data_file:
-            dataset = pickle.load(data_file)         
-        X_train, X_rest, y_train, y_rest = train_test_split(dataset["inputs"], dataset["labels"], test_size=0.3, random_state=42)
-        X_test, X_val, y_test, y_val = train_test_split(X_rest, y_rest, test_size=0.5, random_state=42)
+        with tarfile.open("data/semcor.tar.gz", "r:gz") as tar:
+            tar.extractall("data/semcor_data")
+
+        with open("data/semcor_data/data/semcor.pickle", "rb") as data_file:
+            dataset = pickle.load(data_file)   
+
+        X_train, y_train, X_val, y_val, X_test, y_test = split_data(dataset)
 
         train_data = {"inputs": X_train, "labels": y_train}
         val_data = {"inputs": X_val, "labels": y_val}
@@ -90,7 +104,9 @@ def calculate_accuracy(masked_labels, masked_predictions):
     return correct
 
 def split_data(dataset):
-    X_train, X_rest, y_train, y_rest = train_test_split(dataset["inputs"], dataset["labels"], test_size=0.3, random_state=42)
+    X_train, X_rest, y_train, y_rest = train_test_split(dataset["inputs"],
+                                                        dataset["labels"],
+                                                        test_size=0.3,
+                                                        random_state=42)
     X_test, X_val, y_test, y_val = train_test_split(X_rest, y_rest, test_size=0.5, random_state=42)
     return X_train, y_train, X_val, y_val, X_test, y_test
-
