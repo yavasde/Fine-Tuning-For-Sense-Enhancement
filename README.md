@@ -9,7 +9,7 @@ The code has following functionalities:
 
 
 You can either fine-tune and evaluate the models or evaluate the BERT model and isotropization method without fine-tuning.
-The trained models will be shared via huggingface after the anonimty period ends.
+The trained models will be shared via huggingface after the anonymity period ends.
 
 ## Usage Example
 
