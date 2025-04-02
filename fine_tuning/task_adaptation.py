@@ -1,4 +1,3 @@
-from transformers import BertTokenizer
 import torch
 from torch.nn import BCEWithLogitsLoss
 from sklearn.metrics import accuracy_score
@@ -9,7 +8,6 @@ import source.utils
 def fine_tuning_task(learning_rate=None, num_epochs=None):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = WordOccurrenceClassifier().to(device)
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     source.utils.freeze_model_layers(model)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
@@ -43,7 +41,6 @@ def fine_tuning_task(learning_rate=None, num_epochs=None):
             f"Epoch: {epoch+1}/{num_epochs},\t"
             f"Average Loss: {avg_loss_train}"
         )
-        
         val_running_loss = 0
         all_predictions_val, all_labels_val = [], []
         with torch.no_grad():
@@ -62,14 +59,11 @@ def fine_tuning_task(learning_rate=None, num_epochs=None):
             print(
                 f"Validation:\tEpoch: {epoch+1},\tAccuracy: {val_accuracy},\t"
                 f"Loss: {val_avg_loss}"
-            )
-            
+            )       
 
         if val_avg_loss <= best_loss:
-            torch.save(model, f'trained_models/task_adapted_BERT.pth')
+            torch.save(model, "trained_models/TASK.pth")
             best_loss = val_avg_loss
         else:
             print(f"Best Model is trained for {epoch}")
             break
-    
-
