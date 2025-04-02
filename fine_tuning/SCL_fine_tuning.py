@@ -119,6 +119,3 @@ def fine_tuning_SCL(learning_rate=None, num_epochs=None, tau=None):
 
 
     
-
-
-
