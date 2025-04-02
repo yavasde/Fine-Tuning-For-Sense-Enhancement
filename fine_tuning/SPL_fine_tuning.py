@@ -1,7 +1,7 @@
 from transformers import BertTokenizer
 import torch
 import torch.nn as nn
-import source.utils 
+import source.utils
 from source.models import BERTforSPL
 
 
@@ -51,7 +51,7 @@ def fine_tuning_SPL(learning_rate=None, num_epochs=None, tau=None):
         avg_loss_train = train_running_loss / len(train_dataloader)
         print(
             f"Epoch: {epoch+1}/{num_epochs},\t"
-            f"Average Loss: {avg_loss_train}"
+            f"Average Loss: {avg_loss_train.item()}"
         )
 
         val_running_loss = 0
@@ -79,7 +79,7 @@ def fine_tuning_SPL(learning_rate=None, num_epochs=None, tau=None):
             )
 
         if val_avg_loss <= best_loss:
-            torch.save(model, f'models/SPL-BERT_{tau}.pth')
+            torch.save(model, f"trained_models/SPL-{tau}.pth")
             best_loss = val_avg_loss
         else:
             print(f"Best Model is trained for {epoch}")
