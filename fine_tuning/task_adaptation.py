@@ -49,11 +49,8 @@ def fine_tuning_task(learning_rate=None, num_epochs=None):
         with torch.no_grad():
             for data, labels, indeces in validation_dataloader:
                 labels = labels.to(device=device)
-                data = data.to(device=device)
-                indeces1 = indeces[0].to(device=device)
-                indeces2 = indeces[1].to(device=device)
 
-                outputs = model(data, indeces1, indeces2).to(device=device)
+                outputs = model(data, indeces, device)
                 loss = criterion(outputs.squeeze(), labels.float())
                 val_running_loss += loss.item()
 
@@ -69,7 +66,7 @@ def fine_tuning_task(learning_rate=None, num_epochs=None):
             
 
         if val_avg_loss <= best_loss:
-            torch.save(model, f'models/task_adapted_BERT.pth')
+            torch.save(model, f'trained_models/task_adapted_BERT.pth')
             best_loss = val_avg_loss
         else:
             print(f"Best Model is trained for {epoch}")
