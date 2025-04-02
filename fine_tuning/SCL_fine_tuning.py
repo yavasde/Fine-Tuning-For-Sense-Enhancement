@@ -103,7 +103,7 @@ def fine_tuning_SCL(learning_rate=None, num_epochs=None, tau=None):
 
                 outputs = model(**tokenized_inputs).last_hidden_state.to(device=device)
                 loss = contrastive_loss(outputs, labels, tau=tau)
-                val_running_loss += loss.item()
+                val_running_loss += loss
 
             val_avg_loss = val_running_loss / len(validation_dataloader)
             print(
