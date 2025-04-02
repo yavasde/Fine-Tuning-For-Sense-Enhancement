@@ -51,7 +51,7 @@ def fine_tuning_SPL(learning_rate=None, num_epochs=None, tau=None):
         avg_loss_train = train_running_loss / len(train_dataloader)
         print(
             f"Epoch: {epoch+1}/{num_epochs},\t"
-            f"Average Loss: {avg_loss_train.item()}"
+            f"Average Loss: {avg_loss_train}"
         )
 
         val_running_loss = 0
