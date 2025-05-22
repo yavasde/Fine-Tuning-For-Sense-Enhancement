@@ -1,6 +1,6 @@
 # Fine-Tuning-For-Sense-Enhancement
 
-This repository contains the code for the submission "On the Relation Between Fine-Tuning, Topological Properties, and Task Performance in Sense-Enhanced Embeddings".
+This repository contains the code for the ACL 2025 paper "On the Relation Between Fine-Tuning, Topological Properties, and Task Performance in Sense-Enhanced Embeddings".
 
 The code has following functionalities:
 1) Fine-tuning BERT using different methods (SCL, SPL, and Task adaptation)
